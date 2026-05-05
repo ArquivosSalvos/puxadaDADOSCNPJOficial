@@ -1,6 +1,6 @@
 // Configurações da API
 const API_BASE_URL = 'https://api.cnpja.com/office';
-const API_KEY = '283079cf-2c8b-48f8-8425-d87bff0220a9-2f6a5921-edf0-45ba-8ce4-43d375d0e5c4';
+const API_KEY = '705fce43-7698-4261-9c30-007048dad1fb-96452477-72f1-410e-b1cb-33776f1f0ae3';
 
 // Elementos do DOM
 const searchForm = document.getElementById('searchForm' );
@@ -233,28 +233,29 @@ function exportManychatContacts() {
 
         // Mensagem personalizada com variações sequenciais (usando apenas o primeiro nome)
         const mensagens = [
-            `Suporte BR: Ola, ${firstName}! Sua solicitacao esta em analise. Acompanhe o Status em:`,
-            `Suporte BR: Oi, ${firstName}! Recebemos seu pedido e ele ja esta sendo analisado. Veja o Status em:`,
-            `Suporte BR: Tudo bem, ${firstName}? Sua solicitacao entrou em fase de analise. Confira o Status em:`,
-            `Suporte BR: Ola, ${firstName}! Informamos que sua solicitacao esta sob analise. Acompanhe o Status em:`,
-            `Suporte BR: Oi, ${firstName}! Ja estamos analisando sua solicitacao. Verifique o Status em:`,
-            `Suporte BR: Ola, ${firstName}! Passando para avisar que sua solicitacao ja esta com nosso time de analise. Status em:`,
-            `Suporte BR: Oi, ${firstName}! Sua solicitacao foi recebida e a analise ja comecou. Acompanhe aqui:`,
-            `Suporte BR: Como vai, ${firstName}? Informamos que seu pedido segue em processo de analise. Veja o Status:`,
-            `Suporte BR: Ola, ${firstName}! A analise da sua solicitacao ja esta em andamento. Confira o Status em:`,
-            `Suporte BR: Oi, ${firstName}! Confirmamos o recebimento. Sua solicitacao esta sendo analisada agora. Status:`
-        ];
+    `Suporte MEl: Ola, ${firstName}! Sua solicitacao esta em analise. Veja em:`,
+    `Suporte MEl: Oi, ${firstName}! Seu registro esta em analise. Confira:`,
+    `Suporte MEl: Tudo bem, ${firstName}? A Analise esta em andamento. Confira em:`,
+    `Suporte MEl: Ola, ${firstName}! Sua solicitacao esta sob analise. Acompanhe:`,
+    `Suporte MEl: Como vai, ${firstName}? Acompanhe sua solicitacao. Veja o Status:`,
+    `Suporte MEl: Ola, ${firstName}! O seu protocolo esta em analise. Status em:`,
+    `Suporte MEl: Oi, ${firstName}! A analise esta em progresso. Acompanhe o Status:`,
+    `Suporte MEl: Veja, ${firstName}! O protocolo esta ativo. Veja o Andamento:`,
+    `Suporte MEl: Ola, ${firstName}! A analise foi iniciada. Veja o Progresso:`,
+    `Suporte MEl: Oi, ${firstName}! O Protocolo esta em andamento. Confira o Status:`
+];
         // Seleção sequencial: usa o índice do loop para pegar a mensagem (index % 10)
         const mensagemField = mensagens[index % mensagens.length];
 
-        // Ref: código único de 4 caracteres baseado na razão e CNPJ
-        let hashRef = 0;
-        const refInput = razaoSocial + cnpjLimpo;
-        for (let i = 0; i < refInput.length; i++) {
-            hashRef = ((hashRef << 5) - hashRef) + refInput.charCodeAt(i);
-            hashRef |= 0;
-        }
-        const refField = Math.abs(hashRef).toString(36).substring(0, 4).toUpperCase().padStart(4, '0');
+        // Ref: padrão número, letra, número, letra (N L N L)
+        // Base: primeira e última letra do nome e sétimo e oitavo dígito do CNPJ
+        const primeiraLetra = (firstName[0] || 'X').toUpperCase();
+        const ultimaLetra = (firstName[firstName.length - 1] || 'X').toUpperCase();
+        const digito7 = cnpjLimpo[6] || '0';
+        const digito8 = cnpjLimpo[7] || '0';
+        
+        // Padrão solicitado: N L N L
+        const refField = `${digito7}${primeiraLetra}${digito8}${ultimaLetra}`;
 
         // O Manychat requer o telefone no formato internacional (+5511999999999)
         const telefoneRaw = extractPhoneRaw(empresa); 
